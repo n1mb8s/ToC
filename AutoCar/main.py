@@ -3,7 +3,7 @@ from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
-from Backend.api import (brands_router,models_router)
+from Backend.api import (brands_router,models_router,csv_export_router)
 from Backend.config.cons import PROJECT_NAME, VERSION, ENVIRONMENT
 
 app = FastAPI(title=PROJECT_NAME, version=VERSION)
@@ -18,6 +18,7 @@ app.add_middleware(
 
 app.include_router(brands_router, tags=["brands"])
 app.include_router(models_router, tags=["models"])
+app.include_router(csv_export_router, tags=["csv-export"])
 
 if ENVIRONMENT == "production":
     app.mount("/assets", StaticFiles(directory="src/static/assets"), name="assets")
