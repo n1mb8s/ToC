@@ -71,6 +71,23 @@
       }
     ]
     ```
+  ### 🏎️ Model Detail Endpoints
+- **GET** `/api/model/{brand}/{model_name}`
+  - **Description**: Get all models for a specific brand
+  - **Example**: `GET /api/model/ac/cobra`
+  - **Example Response**:
+    ```json
+    [
+      {
+        "image_url": "https://s1.cdn.autoevolution.com/images/models/AC-_Cobra-MkIII-1965_main.jpg",
+        "name": "AC  Cobra MkIII (1965 - 1967)",
+        "production_years": "1965 - 1967",
+        "engines": [
+          "4.7L V8 4MT RWD (280 HP)"
+        ]
+      }
+    ]
+    ```  
 
 ### 📊 CSV Export Endpoints
 - **GET** `/api/export/all`
