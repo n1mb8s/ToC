@@ -10,8 +10,16 @@ const Home = () => (
       query=""
       onChange={(state) => console.log("search/filter changed", state)}
     />
+    <SearchAndFilter
+      filters={[TypeMock, YearMock]}
+      query=""
+      onChange={(state) => console.log("search/filter changed", state)}
+    />
     {head.map((h, idx) => (
-      <CardContainer key={idx} head={h} cards={cards} />
+      <CardContainer key={idx} head={null} cards={cards} card_type="model" />
+    ))}
+    {head.map((h, idx) => (
+      <CardContainer key={idx} head={null} cards={cards} card_type="brand" />
     ))}
   </main>
 );
