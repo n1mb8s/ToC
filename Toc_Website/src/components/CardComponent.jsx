@@ -7,14 +7,10 @@ const CardComponent = ({ card }) => (
       alt={card.name}
       className="w-full rounded-md mb-3 object-cover"
     />
-    <h3 className="text-lg font-semibold mb-2">{card.name}</h3>
-    <ul className="list-disc pl-5 m-0">
-      {(card.list || []).map((item, idx) => (
-        <li key={idx} className="text-sm text-gray-500">
-          {item}
-        </li>
-      ))}
-    </ul>
+    <h4 className="truncate text-base font-semibold mb-2">{card.name}</h4>
+    <p className="text-sm text-[#546881] truncate">
+      {(card.list || []).join(", ")}
+    </p>
   </div>
 );
 
