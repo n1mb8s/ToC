@@ -11,7 +11,7 @@ const Home = () => (
       onChange={(state) => console.log("search/filter changed", state)}
     />
     {head.map((h, idx) => (
-      <CardContainer key={idx} head={null} cards={cards} card_type="brand" />
+      <CardContainer key={idx} head={h} cards={cards} card_type="brand" />
     ))}
   </main>
 );
