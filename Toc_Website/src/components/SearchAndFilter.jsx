@@ -1,51 +1,53 @@
 import React, { useEffect, useMemo, useState } from "react";
 import SearchBar from "./SearchBar";
 import Filter from "./Filter";
-import { ALPHABET_OPTIONS, COLOR_OPTIONS, YEAR_OPTIONS } from "../mocks/filter";
-
-// Map built-in keys -> config
-const BUILTIN_FILTERS = {
-  alphabet: { key: "alphabet", label: "Alphabet", options: ALPHABET_OPTIONS },
-  color: { key: "color", label: "Color", options: COLOR_OPTIONS },
-  year: { key: "year", label: "Year", options: YEAR_OPTIONS },
-};
 
 /**
  * Props:
- * - onChange: ({ query, ...filterValues }) => void
- * - initial:  { query?: string, [filterKey: string]: string }
- * - filters:  Array<string | { key: string; label: string; options: {value,label}[] }>
- *             e.g. ['alphabet', 'color'] or [{ key:'status', label:'Status', options:[...]}]
- * - showSearch?: boolean (default: true)
+ * - filters: Array<{ key: string; label: string; initial?: string; options: { value: string; label: string }[] }>
+ * - query?: string                // initial (and external updates) for search text
+ * - onChange?: (state) => void    // { query, [key]: value }
+ * - showSearch?: boolean          // default: true
  */
-const SearchAndFilter = ({ onChange, initial, filters, showSearch = true }) => {
-  const [query, setQuery] = useState(initial.query ?? "");
+const SearchAndFilter = ({
+  filters = [],
+  query: queryProp = "",
+  onChange,
+  showSearch = true,
+}) => {
+  // query: initialize from prop, update if prop changes
+  const [query, setQuery] = useState(queryProp);
+  useEffect(() => {
+    setQuery(queryProp);
+  }, [queryProp]);
 
-  // Normalize filters prop into full objects
-  const normalizedFilters = useMemo(() => {
-    return filters
-      .map((f) => (typeof f === "string" ? BUILTIN_FILTERS[f] : f))
-      .filter(Boolean);
-  }, [filters]);
+  // Normalize filters (ensure truthy and shaped)
+  const normalizedFilters = useMemo(
+    () => (filters || []).filter(Boolean),
+    [filters]
+  );
 
-  // Build initial values per filter
+  // Build initial values per filter:
+  // - prefer filter.initial if present and valid
+  // - else first option's value
   const initialFilterValues = useMemo(() => {
     const obj = {};
-    normalizedFilters.forEach(({ key, options }) => {
-      const init = initial[key];
-      const defaultVal = options?.[0]?.value ?? ""; // 'All' if present, or first option
-      obj[key] = init ?? defaultVal;
+    normalizedFilters.forEach(({ key, options = [], initial }) => {
+      const optionValues = options.map((o) => o.value);
+      const hasInitial = initial != null && optionValues.includes(initial);
+      obj[key] = hasInitial ? initial : options[0]?.value ?? ""; // default to first option (e.g., 'All')
     });
     return obj;
-  }, [normalizedFilters, initial]);
+  }, [normalizedFilters]);
 
   const [values, setValues] = useState(initialFilterValues);
 
+  // Keep internal filter values in sync if filters change
   useEffect(() => {
-    setValues(initialFilterValues); // update if filters/initial change
+    setValues(initialFilterValues);
   }, [initialFilterValues]);
 
-  // Notify parent on any change
+  // Bubble up changes
   useEffect(() => {
     onChange?.({ query, ...values });
   }, [query, values, onChange]);
@@ -57,6 +59,7 @@ const SearchAndFilter = ({ onChange, initial, filters, showSearch = true }) => {
     <div className="w-full flex flex-col md:flex-row items-start md:items-center gap-4 md:gap-6">
       {showSearch && (
         <div className="flex-1 w-full">
+          {/* If your SearchBar supports a value prop, you can pass `value={query}` */}
           <SearchBar onSearch={setQuery} />
         </div>
       )}
