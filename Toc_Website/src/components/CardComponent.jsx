@@ -1,8 +1,7 @@
-// ...existing code...
 import React from "react";
 const CardComponent = ({ card }) => {
   return (
-    <div className="aspect-[3/4] border border-gray-200 rounded-lg shadow-sm">
+    <div className="aspect-[3/4]  border border-gray-200 rounded-lg shadow-sm bg-white">
       <img
         src={card.image}
         alt={card.name}
