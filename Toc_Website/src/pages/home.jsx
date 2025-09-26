@@ -4,7 +4,7 @@ import CardContainer from "../components/CardContainer";
 import { cards } from "../mocks/card";
 
 const Home = () => (
-  <main>
+  <main className="box-border px-[100px]">
     <CardContainer cards={cards} />
     {/* Option B: render CardComponent manually as children
     <CardContainer>
