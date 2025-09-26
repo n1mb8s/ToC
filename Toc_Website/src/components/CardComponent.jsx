@@ -6,7 +6,7 @@ const CardComponent = ({ card }) => {
       <img
         src={card.image}
         alt={card.name}
-        className="w-full object-cover aspect-square"
+        className="w-full object-cover aspect-square rounded-t-lg"
       />
       <div className="px-4 flex flex-col justify-center pt-4">
         <h4 className="truncate text-base font-semibold mb-2">{card.name}</h4>
