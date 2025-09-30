@@ -12,8 +12,7 @@ function App() {
           to="/"
           end
           className={({ isActive }) =>
-            `px-3 py-1.5 rounded-md text-sm ${
-              isActive ? "bg-white text-black" : "text-white hover:bg-white/10"
+            `px-3 py-1.5 rounded-md text-sm ${isActive ? "bg-white text-black" : "text-white hover:bg-white/10"
             }`
           }
         >
@@ -22,8 +21,7 @@ function App() {
         <NavLink
           to="/brands"
           className={({ isActive }) =>
-            `px-3 py-1.5 rounded-md text-sm ${
-              isActive ? "bg-white text-black" : "text-white hover:bg-white/10"
+            `px-3 py-1.5 rounded-md text-sm ${isActive ? "bg-white text-black" : "text-white hover:bg-white/10"
             }`
           }
         >
@@ -35,6 +33,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/brands" element={<Brand />} />
+        <Route path="/brands/:brandName" element={<Brand />} />
 
         {/* 404 -> redirect home */}
         <Route path="*" element={<Navigate to="/" replace />} />
