@@ -94,10 +94,32 @@ async def search_cars(query: str):
                     url=site_url.strip(),
                     image_url=image_url.strip()
                 ))
+                # If a brand matches the query, include all its models
+                try:
+                    model_pattern = r'<a href="([^"]+)" title="[^"]+? specs and photos">' r'<img[^>]+src="([^"]+)"[^>]*>' r'.*?<h4>([^<]+)</h4>'
+                    models_url = f"/{name.lower()}"
+                    print(f"DEBUG: Attempting to fetch all models for brand '{name}' from URL: '{models_url}'")
+                    models_matches = Scraper.find(model_pattern, models_url)
+                    print(f"DEBUG: All models found for brand '{name}': {models_matches}")
+                    
+                    for model_brand_url, model_image_url, model_name in models_matches:
+                        cleaned_model_name = re.sub(r'\s+', ' ', model_name).strip()
+                        results.append(SearchResultItem(
+                            type="model",
+                            name=cleaned_model_name,
+                            url=model_brand_url.strip(),
+                            image_url=model_image_url.strip(),
+                            brand_name=name.strip()
+                        ))
+                        print(f"DEBUG: Added model '{cleaned_model_name}' for brand '{name}'")
+                except Exception as e:
+                    print(f"Error fetching all models for brand '{name}': {e}")
+            
     except Exception as e:
         print(f"Error searching brands: {e}")
 
-    # Search for models
+    # Search for models that don't belong to a matched brand (or if brand wasn't explicitly matched)
+    # This part remains to catch models directly matching the query, even if their brand wasn't a direct match
     try:
         model_pattern = r'<a href="([^"]+)" title="[^"]+? specs and photos">' r'<img[^>]+src="([^"]+)"[^>]*>' r'.*?<h4>([^<]+)</h4>'
         
@@ -106,7 +128,7 @@ async def search_cars(query: str):
         for brand_match in all_brands_matches:
             brand_name = brand_match[1].strip()
             brand_url_segment = brand_match[0].strip()
-            print(f"DEBUG: Currently processing brand: '{brand_name}', URL segment: '{brand_url_segment}'")
+            print(f"DEBUG: Currently processing brand for model search: '{brand_name}', URL segment: '{brand_url_segment}'")
             
             # Fetch models for each brand and search within them
             models_url = f"/{brand_name.lower()}"
@@ -118,7 +140,17 @@ async def search_cars(query: str):
                 cleaned_model_name = re.sub(r'\s+', ' ', model_name).strip() # Normalize spaces
                 cleaned_combined_name = re.sub(r'\s+', ' ', f"{brand_name} {model_name}").strip() # Normalize spaces
                 print(f"DEBUG: Query: '{query.lower()}', Cleaned Model Name: '{cleaned_model_name.lower()}', Cleaned Combined Name: '{cleaned_combined_name.lower()}'")
-                if query.lower() in cleaned_combined_name.lower() or query.lower() in cleaned_model_name.lower():
+                
+                # Only add if not already added by a brand match and if it matches the query
+                # This prevents duplicate entries if a brand search already added all models
+                is_already_added = any(
+                    result.type == "model" and
+                    result.name.lower() == cleaned_model_name.lower() and
+                    result.brand_name.lower() == brand_name.lower()
+                    for result in results
+                )
+                
+                if not is_already_added and (query.lower() in cleaned_combined_name.lower() or query.lower() in cleaned_model_name.lower()):
                     results.append(SearchResultItem(
                         type="model",
                         name=cleaned_model_name, # Use cleaned name for result
