@@ -71,7 +71,7 @@
       }
     ]
     ```
-  ### 🏎️ Model Detail Endpoints
+### 🏎️ Model Detail Endpoints
 - **GET** `/api/model/{brand}/{model_name}`
   - **Description**: Get all models for a specific brand
   - **Example**: `GET /api/model/ac/cobra`

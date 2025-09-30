@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException, status
-from typing import List
+from typing import List, Optional
 from Backend.utils import Scraper
-from Backend.models import CarModel
+from Backend.models import CarModel, CarBrand, SearchResultItem, SearchResults
 import re
 
 router = APIRouter(prefix="/api")
@@ -53,16 +53,7 @@ async def get_model_details(brand: str, model_name: str):
     try:
         url_path = f"{brand.lower()}/{model_name}"
     
-        raw_html = Scraper.get_raw_html(url_path)
-        if not raw_html:
-            Scraper.find(r"dummy_pattern_to_cache_page", url_path)
-            raw_html = Scraper.get_raw_html(url_path)
-
-        if not raw_html:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail=f"HTML content not found for '{url_path}'"
-            )
+        raw_html = Scraper.fetch_raw_html(url_path)
         
         car_details_list = Scraper.scrape_car_details(raw_html)
 
@@ -81,3 +72,68 @@ async def get_model_details(brand: str, model_name: str):
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=str(e)
         )
+
+@router.get("/search", response_model=SearchResults)
+async def search_cars(query: str):
+    """
+    ค้นหารถยนต์, รุ่น, หรือรายละเอียดตามคำค้นหา
+    """
+    results: List[SearchResultItem] = []
+    
+    # Search for brands
+    try:
+        brand_pattern = r'<a\s+href="([^"]+)"\s+title="([^"]+?)\s*">\s*<img[^>]+src="([^"]+)"'
+        all_brands_matches = Scraper.find(brand_pattern, "cars")
+        print(f"DEBUG: All brands found: {all_brands_matches}")
+        
+        for site_url, name, image_url in all_brands_matches:
+            if query.lower() in name.lower():
+                results.append(SearchResultItem(
+                    type="brand",
+                    name=name.strip(),
+                    url=site_url.strip(),
+                    image_url=image_url.strip()
+                ))
+    except Exception as e:
+        print(f"Error searching brands: {e}")
+
+    # Search for models
+    try:
+        model_pattern = r'<a href="([^"]+)" title="[^"]+? specs and photos">' r'<img[^>]+src="([^"]+)"[^>]*>' r'.*?<h4>([^<]+)</h4>'
+        
+        # Iterate through all brands to find models
+        # This can be optimized if we have a way to search models directly without knowing the brand first
+        for brand_match in all_brands_matches:
+            brand_name = brand_match[1].strip()
+            brand_url_segment = brand_match[0].strip()
+            print(f"DEBUG: Currently processing brand: '{brand_name}', URL segment: '{brand_url_segment}'")
+            
+            # Fetch models for each brand and search within them
+            models_url = f"/{brand_name.lower()}"
+            print(f"DEBUG: Attempting to fetch models from URL: '{models_url}' for brand '{brand_name}'")
+            models_matches = Scraper.find(model_pattern, models_url)
+            print(f"DEBUG: Models found for brand '{brand_name}' from URL '{models_url}': {models_matches}")
+            
+            for model_brand_url, model_image_url, model_name in models_matches:
+                cleaned_model_name = re.sub(r'\s+', ' ', model_name).strip() # Normalize spaces
+                cleaned_combined_name = re.sub(r'\s+', ' ', f"{brand_name} {model_name}").strip() # Normalize spaces
+                print(f"DEBUG: Query: '{query.lower()}', Cleaned Model Name: '{cleaned_model_name.lower()}', Cleaned Combined Name: '{cleaned_combined_name.lower()}'")
+                if query.lower() in cleaned_combined_name.lower() or query.lower() in cleaned_model_name.lower():
+                    results.append(SearchResultItem(
+                        type="model",
+                        name=cleaned_model_name, # Use cleaned name for result
+                        url=model_brand_url.strip(),
+                        image_url=model_image_url.strip(),
+                        brand_name=brand_name
+                    ))
+                    
+    except Exception as e:
+        print(f"Error searching models for brand '{brand_name}': {e}")
+
+    if not results:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"No results found for query '{query}'"
+        )
+    
+    return SearchResults(results=results)
