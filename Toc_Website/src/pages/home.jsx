@@ -13,7 +13,9 @@ const Home = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(`${import.meta.env.VITE_BASE_URL}/api/brands`);
+        const response = await fetch(
+          `${import.meta.env.VITE_BASE_URL}/api/brands`
+        );
 
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -27,10 +29,10 @@ const Home = () => {
     };
 
     fetchData();
-  }, [])
+  }, []);
 
   const handleCardClick = (card) => {
-    const brandName = card.name.replace(/\s+/g, '-');
+    const brandName = card.name.replace(/\s+/g, "-");
     navigate(`/brands/${brandName}`);
   };
 
