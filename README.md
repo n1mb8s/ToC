@@ -88,6 +88,43 @@
       }
     ]
     ```  
+### 🏎️ Model Detail Endpoints
+- **GET** `/api/search/query{string}`
+  - **Description**: Get all data from search
+  - **Example**: `GET /api/search?query=bmw`
+  - **Example Response**:
+    ```json
+    [
+      {
+        "results": [
+          {
+            "type": "brand",
+            "name": "BMW",
+            "url": "https://www.autoevolution.com/bmw/",
+            "image_url": "https://s1.cdn.autoevolution.com/images/producers/bmw-sm.jpg",
+            "brand_name": null,
+            "details": null
+          },
+          {
+            "type": "model",
+            "name": "BMW iX",
+            "url": "https://www.autoevolution.com/bmw/ix/",
+            "image_url": "https://s1.cdn.autoevolution.com/images/models/thumb/BMW_iX-2025_main.jpg_tmb.jpg",
+            "brand_name": "BMW",
+            "details": null
+          },
+          {
+            "type": "model",
+            "name": "BMW M3 CS Touring",
+            "url": "https://www.autoevolution.com/bmw/m3-cs-touring/",
+            "image_url": "https://s1.cdn.autoevolution.com/images/models/thumb/BMW_M3-CS-Touring-2025_main.jpg_tmb.jpg",
+            "brand_name": "BMW",
+            "details": null
+          }
+        ]
+      }
+    ]
+    ```  
 
 ### 📊 CSV Export Endpoints
 - **GET** `/api/export/all`
