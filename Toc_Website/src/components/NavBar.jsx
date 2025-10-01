@@ -5,8 +5,26 @@ import SearchBar from "./SearchBar";
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
 
+  const handleDownload = async () => {
+    try {
+      const response = await fetch(`${import.meta.env.VITE_BASE_URL}/api/download/csv/combined`);
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'car_data_combined.csv';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+
+    } catch (err) {
+      alert(err.message);
+    }
+  };
+
   return (
-    <nav className="w-full px-6 md:px-32 py-4 bg-[#36446433] backdrop-blur-sm border-b border-white/10">
+    <nav className="w-full px-6 md:px-32 py-4 bg-[#36446433] backdrop-blur-sm border-b border-white/10 sticky top-0 z-10">
       <div className="flex justify-between items-center">
         
         {/* Logo + Name */}
@@ -27,7 +45,7 @@ const Navbar = () => {
         </div>
 
         {/* Download button */}
-        <button className="hidden md:flex items-center gap-2 px-4 py-2 bg-[#006EFA] rounded-full">
+        <button className="hidden md:flex items-center gap-2 px-4 py-2 bg-[#006EFA] rounded-full cursor-pointer" onClick={handleDownload}>
           <img src="/src/assets/download.svg" alt="Download" className="w-5 h-5" />
           <span className="text-white text-sm md:text-base font-medium font-['IBM Plex Sans Thai']">
             Download

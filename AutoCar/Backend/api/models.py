@@ -37,8 +37,6 @@ async def get_model_by_brand(brand_name: str):
             )
         return models
 
-    except HTTPException:
-        raise
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,

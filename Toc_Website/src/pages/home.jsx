@@ -8,11 +8,13 @@ import { useNavigate } from "react-router-dom";
 
 const Home = () => {
   const [cards, setCards] = useState([]);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
       try {
+        setLoading(true);
         const response = await fetch(`${import.meta.env.VITE_BASE_URL}/api/brands`);
 
         if (!response.ok) {
@@ -23,6 +25,8 @@ const Home = () => {
         setCards(data);
       } catch (err) {
         alert(err.message);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -44,6 +48,21 @@ const Home = () => {
   }, {});
 
   const sortedGroups = Object.keys(groupedCards).sort();
+
+  if (loading) {
+    return (
+      <>
+        <Navbar />
+        <Banner />
+        <main className="box-border px-[132px] bg-[#0D1017]">
+          <div className="flex flex-col items-center justify-center py-20">
+            <div className="text-white text-xl">Loading brands...</div>
+            <div className="mt-4 w-8 h-8 border-4 border-white border-t-transparent rounded-full animate-spin"></div>
+          </div>
+        </main>
+      </>
+    );
+  }
 
   return (
     <>
