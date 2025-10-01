@@ -7,55 +7,36 @@ from Backend.config import CRAWLER_ENDPOINT, CRAWLER_HEADERS
 
 
 class Scraper:
-    def __init__(self, cache_file: str = "scraper_cache.json"):
-        self.cache_file = Path(cache_file)
+    def __init__(self):
         self.scraper = cloudscraper.create_scraper()
-
-        # โหลด cache จากไฟล์ถ้ามี
-        if self.cache_file.exists():
-            try:
-                with open(self.cache_file, "r", encoding="utf-8") as f:
-                    self.__cache = json.load(f)
-            except Exception:
-                self.__cache = {}
-        else:
-            self.__cache = {}
-
-    def _save_cache(self):
-        """บันทึก cache ลงไฟล์"""
-        with open(self.cache_file, "w", encoding="utf-8") as f:
-            json.dump(self.__cache, f, ensure_ascii=False, indent=2)
 
     def find(
         self,
         pattern: str,
         url_path: str,
-        cache=True,
         flags=re.DOTALL | re.IGNORECASE,
     ) -> list[Any]:
         """
         ถ้า url_path ไม่มีใน cache → ไปโหลดจากเว็บ
         ถ้ามีแล้ว → ใช้ cache ทันที
         """
-        if not cache or (url_path not in self.__cache):
-            url = f"{CRAWLER_ENDPOINT}/{url_path}"
-            response = self.scraper.get(url, headers=CRAWLER_HEADERS)
+        url = f"{CRAWLER_ENDPOINT}/{url_path}"
+        response = self.scraper.get(url, headers=CRAWLER_HEADERS)
 
-            if response.status_code != 200:
-                raise Exception(f"Failed to get {url_path}, status {response.status_code}")
+        if response.status_code != 200:
+            raise Exception(f"Failed to get {url_path}, status {response.status_code}")
 
-            # เก็บ HTML ของ path นี้ลง cache
-            self.__cache[url_path] = response.text
-            self._save_cache()
-        else:
-            print(f"[CACHE] use html for {url_path}")
-
-        raw_html = self.__cache[url_path]
+        raw_html = response.text
         matches = re.findall(pattern, raw_html, flags=flags)
         return matches
 
-    def get_raw_html(self, url_path: str) -> str | None:
-        return self.__cache.get(url_path)
+    def fetch_raw_html(self, url_path: str) -> str:
+        url = f"{CRAWLER_ENDPOINT}/{url_path}"
+        response = self.scraper.get(url, headers=CRAWLER_HEADERS)
+
+        if response.status_code != 200:
+            raise Exception(f"Failed to get {url_path}, status {response.status_code}")
+        return response.text
 
     def parser(self, pattern: str, data: str, flags=re.DOTALL | re.IGNORECASE) -> list[str]:
         return re.findall(pattern, data, flags=flags)
@@ -99,6 +80,10 @@ class Scraper:
                 engine_pattern = r'<p class="engitm subtlesep_top"><a href="[^"]+" class="engurl semibold" title="[^"]+">.*?<span class="col-green2">([^<]+)</span></a></p>'
                 engine_matches = self.parser(engine_pattern, block)
                 details_dict['engines'] = [engine.strip() for engine in engine_matches] if engine_matches else []
+
+                news_text = self.scrape_news_text(block)
+                if news_text:
+                    details_dict['description'] = " ".join(news_text)
 
                 all_car_details.append(details_dict)
         else:
@@ -144,6 +129,11 @@ class Scraper:
             for key, value in other_details_matches:
                 details_dict[key.replace(' ', '_').lower()] = value.strip()
 
+            # Extract car description
+            description_pattern = r'<div class="newstext">\s*(.*?)\s*</div>'
+            description_matches = self.parser(description_pattern, html_content)
+            details_dict['description'] = description_matches[0].strip() if description_matches else None
+
             all_car_details.append(details_dict)
 
         return all_car_details
@@ -155,3 +145,20 @@ class Scraper:
         image_pattern = r'<img.*?src="([^"]+\.jpg)".*?>'
         image_matches = self.parser(image_pattern, html_content)
         return image_matches
+    
+    def scrape_news_text(self, html_content: str) -> list[str]:
+        news_pattern = r'<div class="newstext">(.*?)</div>'
+        news_matches = self.parser(news_pattern, html_content, re.DOTALL)
+        
+        cleaned_news = []
+        for news_html in news_matches:
+            # Remove <br> tags
+            text = re.sub(r'<br\s*/?>', ' ', news_html)
+            # Remove any other HTML tags
+            text = re.sub(r'<[^>]+>', '', text)
+            # Replace multiple spaces with a single space and strip whitespace
+            text = re.sub(r'\s+', ' ', text).strip()
+            if text:
+                cleaned_news.append(text)
+                
+        return cleaned_news
