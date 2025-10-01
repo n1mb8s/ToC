@@ -2,52 +2,42 @@ import React, { useEffect, useMemo, useState } from "react";
 import SearchBar from "./SearchBar";
 import Filter from "./Filter";
 
-/**
- * Props:
- * - filters: Array<{ key: string; label: string; initial?: string; options: { value: string; label: string }[] }>
- * - query?: string                // initial (and external updates) for search text
- * - onChange?: (state) => void    // { query, [key]: value }
- * - showSearch?: boolean          // default: true
- */
 const SearchAndFilter = ({
   filters = [],
   query: queryProp = "",
   onChange,
   showSearch = true,
 }) => {
-  // query: initialize from prop, update if prop changes
   const [query, setQuery] = useState(queryProp);
   useEffect(() => {
     setQuery(queryProp);
   }, [queryProp]);
 
-  // Normalize filters (ensure truthy and shaped)
   const normalizedFilters = useMemo(
     () => (filters || []).filter(Boolean),
     [filters]
   );
 
-  // Build initial values per filter:
-  // - prefer filter.initial if present and valid
-  // - else first option's value
   const initialFilterValues = useMemo(() => {
     const obj = {};
     normalizedFilters.forEach(({ key, options = [], initial }) => {
       const optionValues = options.map((o) => o.value);
       const hasInitial = initial != null && optionValues.includes(initial);
-      obj[key] = hasInitial ? initial : options[0]?.value ?? ""; // default to first option (e.g., 'All')
+      obj[key] = hasInitial ? initial : options[0]?.value ?? "";
     });
     return obj;
   }, [normalizedFilters]);
 
   const [values, setValues] = useState(initialFilterValues);
 
-  // Keep internal filter values in sync if filters change
   useEffect(() => {
-    setValues(initialFilterValues);
+    setValues((prev) => {
+      const keys = Object.keys({ ...prev, ...initialFilterValues });
+      const equal = keys.every((k) => prev[k] === initialFilterValues[k]);
+      return equal ? prev : initialFilterValues;
+    });
   }, [initialFilterValues]);
 
-  // Bubble up changes
   useEffect(() => {
     onChange?.({ query, ...values });
   }, [query, values, onChange]);
