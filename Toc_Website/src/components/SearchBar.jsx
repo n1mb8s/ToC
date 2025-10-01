@@ -47,7 +47,7 @@ const SearchBar = ({ onSearch }) => {
   return (
     <form
       onSubmit={handleSubmit}
-      className="flex items-center justify-between px-5 py-2 rounded-full border border-[#BFBFBF] w-full max-w-md"
+      className="flex items-center justify-between px-5 py-2 rounded-full border border-[#BFBFBF] w-full"
     >
       {/* input */}
       <input
@@ -60,10 +60,7 @@ const SearchBar = ({ onSearch }) => {
 
       {/* search icon */}
       <div className="flex items-center gap-2">
-        <img
-            src="/src/assets/search.svg"
-            className="w-6 h-6"
-        />
+        <img src="/src/assets/search.svg" className="w-6 h-6" />
       </div>
     </form>
   );
