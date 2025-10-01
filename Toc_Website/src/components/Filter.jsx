@@ -17,7 +17,7 @@ const Filter = ({ options = defaultOptions, value, onChange, label }) => {
                      text-[#BFBFBF] pl-3 pr-10 text-sm cursor-pointer"
       >
         {options.map((opt) => (
-          <option key={opt.value} value={opt.value}>
+          <option key={opt.value} value={opt.value} className="bg-[#0D1017]">
             {opt.label === "All" ? label : opt.label}
           </option>
         ))}
