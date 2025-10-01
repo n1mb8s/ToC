@@ -8,7 +8,6 @@ function App() {
   return (
     <div className="min-h-screen bg-[#0D1017]">
       <Navbar />
-
       {/* Route outlet */}
       <Routes>
         <Route path="/" element={<Home />} />

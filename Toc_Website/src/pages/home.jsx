@@ -49,7 +49,6 @@ const Home = () => {
 
   return (
     <>
-      <Navbar />
       <Banner />
       <main className="box-border px-[132px] bg-[#0D1017]">
         <SearchAndFilter
