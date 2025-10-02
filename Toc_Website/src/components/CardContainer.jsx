@@ -3,7 +3,7 @@ import CardComponent from "./CardComponent";
 const CardContainer = ({ head, cards, card_type, onClick }) => {
   if (!head) head = { title: " " };
   const containerClass =
-    "w-full mx-auto mt-8  grid grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-y-4 gap-x-8";
+    "w-full mx-auto mt-8 grid grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-x-8";
   if (cards && Array.isArray(cards)) {
     return (
       <>

@@ -5,7 +5,7 @@ const CardComponent = ({ card = {}, card_type = "model", onClick }) => {
 
   return (
     <div
-      className={`border border-gray-200 rounded-lg shadow-sm bg-white cursor-pointer hover:shadow-md transition-shadow ${isModel ? "aspect-[4/3]" : "aspect-[3/4]"
+      className={`mb-4 border border-gray-200 rounded-lg shadow-sm bg-white cursor-pointer hover:shadow-md transition-shadow ${isModel ? "aspect-[4/3]" : "aspect-[3/4]"
         }`}
       onClick={() => onClick && onClick(card)}
     >

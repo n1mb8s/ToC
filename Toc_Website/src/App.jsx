@@ -3,6 +3,7 @@ import Home from "./pages/home";
 import Brand from "./pages/brand";
 import Navbar from "./components/NavBar";
 import ModelDetails from "./pages/model_details";
+import Navbar from "./components/NavBar";
 
 function App() {
   return (
@@ -10,13 +11,13 @@ function App() {
       <Navbar />
       {/* Route outlet */}
       <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/brands" element={<Brand />} />
-        <Route path="/brands/:brandName" element={<Brand />} />
-        <Route path="/model_details" element={<ModelDetails />} />
+          <Route path="/" element={<Home />} />
+          <Route path="/brands" element={<Brand />} />
+          <Route path="/brands/:brandName" element={<Brand />} />
+          <Route path="/brands/:brandName/:model_name" element={<ModelDetails />} />
 
-        {/* 404 -> redirect home */}
-        <Route path="*" element={<Navigate to="/" replace />} />
+          {/* 404 -> redirect home */}
+          <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </div>
   );
