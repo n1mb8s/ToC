@@ -72,7 +72,7 @@ const Navbar = () => {
           <div className="text-white text-xl md:text-2xl font-bold font-[Cuprum]">
             CarChanom
           </div>
-        </NavLink>
+        </div>
 
         {/* Desktop: SearchBar */}
         <div className="hidden md:flex flex-1 justify-center px-6" ref={desktopSearchRef}>

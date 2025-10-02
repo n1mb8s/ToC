@@ -79,7 +79,7 @@ const Brand = () => {
   if (loading) {
     return (
       <>
-        <Navbar />
+        {/* <Navbar /> */}
         <main className="box-border px-[132px] bg-[#0D1017]">
           <div className="flex flex-col items-center justify-center py-20">
             <div className="text-white text-xl">Loading models...</div>
@@ -92,7 +92,7 @@ const Brand = () => {
 
   return (
     <>
-      <Navbar />
+      {/* <Navbar /> */}
       <main className="box-border px-[132px] bg-[#0D1017]">
         <div className="flex flex-col gap-12">
           <h1 className="text-white text-4xl font-bold mt-12 mb-0">{brandName.replace(/-/g, ' ')}</h1>

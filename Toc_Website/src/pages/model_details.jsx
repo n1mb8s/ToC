@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import Navbar from "../components/NavBar";
 
 export default function ModelDetails() {
   const [models, setModels] = useState([]);
@@ -49,7 +48,6 @@ export default function ModelDetails() {
   if (loading) {
     return (
       <>
-        <Navbar />
         <div className="w-full min-h-screen bg-[#0D1017] text-white flex flex-col items-center justify-center">
           <div className="text-xl">Loading model details...</div>
         </div>
@@ -60,7 +58,6 @@ export default function ModelDetails() {
   if (error) {
     return (
       <>
-        <Navbar />
         <div className="w-full min-h-screen bg-[#0D1017] text-white flex flex-col items-center justify-center">
           <div className="text-xl text-red-500">Error: {error}</div>
         </div>
@@ -70,7 +67,6 @@ export default function ModelDetails() {
 
   return (
     <>
-      <Navbar />
       <div className="w-full min-h-screen bg-[#0D1017] text-white">
         {models.map((model, index) => (
           <div key={model.id || index} className="flex flex-col items-center">

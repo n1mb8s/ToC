@@ -3,7 +3,6 @@ import Home from "./pages/home";
 import Brand from "./pages/brand";
 import Navbar from "./components/NavBar";
 import ModelDetails from "./pages/model_details";
-import Navbar from "./components/NavBar";
 
 function App() {
   return (

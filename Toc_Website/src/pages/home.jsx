@@ -1,5 +1,4 @@
 import CardContainer from "../components/CardContainer";
-import Navbar from "../components/NavBar";
 import Banner from "../components/Banner";
 import SearchAndFilter from "../components/SearchAndFilter";
 import { AlphabetMock, TypeMock, YearMock } from "../mocks/filter";
@@ -88,7 +87,6 @@ const Home = () => {
   if (loading) {
     return (
       <>
-        <Navbar />
         <Banner />
         <main className="box-border px-[132px] bg-[#0D1017]">
           <div className="flex flex-col items-center justify-center py-20">
