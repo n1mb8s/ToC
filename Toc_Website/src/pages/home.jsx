@@ -28,6 +28,7 @@ const Home = () => {
         }
 
         const data = await response.json();
+        console.log('Brands API response:', data);
         setCards(data);
       } catch (err) {
         alert(err.message);
