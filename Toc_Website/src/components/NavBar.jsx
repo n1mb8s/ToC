@@ -65,7 +65,7 @@ const Navbar = () => {
         {/* Logo + Name */}
         <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/')}>
           <img
-            src="@/../public/logo.svg"
+            src="./logo.svg"
             alt="CarChanom Logo"
             className="w-12 h-8 md:w-14 md:h-9"
           />
