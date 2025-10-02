@@ -118,7 +118,7 @@ const Navbar = () => {
       )}
       {/* Below-nav results panel */}
       {searchResults.length > 0 && (
-        <div className="px-6 md:px-32 py-3 bg-[#0D1017] border-b border-white/10" ref={resultsRef}>
+        <div className="px-3 py-3 bg-[#0D1017] border-b border-white/10" ref={resultsRef}>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 max-h-96 overflow-y-auto">
             {searchResults.map((item, idx) => (
               <div
