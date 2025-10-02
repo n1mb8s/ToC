@@ -62,7 +62,7 @@ const SearchAll = ({ onResults, showResultsInline = true }) => {
         />
         {loading ? (<div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />) : 
         <div className="flex items-center gap-2 cursor-pointer" onClick={handleSubmit}>
-          <img src="/src/assets/search.svg" className="w-6 h-6" />
+          <img src="@/../public/search.svg" className="w-6 h-6" />
         </div>
         }
       </form>

@@ -27,7 +27,7 @@ const SearchBar = ({ onSearch }) => {
       {/* search icon */}
       <div className="flex items-center gap-2 cursor-pointer" onClick={handleSubmit}>
         <img
-            src="/src/assets/search.svg"
+            src="@/../public/search.svg"
             className="w-6 h-6"
         />
       </div>
