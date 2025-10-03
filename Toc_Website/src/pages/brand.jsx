@@ -16,7 +16,7 @@ const Brand = () => {
   });
   const { brandName } = useParams();
   const navigate = useNavigate();
-  const filtersConfig = useMemo(() => [TypeMock, YearMock], []);
+  const filtersConfig = useMemo(() => [], []);
 
   const formatModelName = (modelName) => {
     modelName = modelName.replace(brandName, '').trim();

@@ -12,17 +12,18 @@ const Navbar = () => {
 
   const handleDownload = async () => {
     try {
-      const response = await fetch(`${import.meta.env.VITE_BASE_URL}/api/download/csv/combined`);
+      const response = await fetch(
+        `${import.meta.env.VITE_BASE_URL}/api/download/csv/combined`
+      );
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
+      const a = document.createElement("a");
       a.href = url;
-      a.download = 'car_data_combined.csv';
+      a.download = "car_data_combined.csv";
       document.body.appendChild(a);
       a.click();
       a.remove();
       window.URL.revokeObjectURL(url);
-
     } catch (err) {
       alert(err.message);
     }
@@ -63,7 +64,10 @@ const Navbar = () => {
     <nav className="w-full px-6 md:px-32 py-4 bg-[#36446433] backdrop-blur-sm border-b border-white/10 sticky top-0 z-10">
       <div className="flex justify-between items-center">
         {/* Logo + Name */}
-        <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/')}>
+        <div
+          className="flex items-center gap-2 cursor-pointer"
+          onClick={() => navigate("/")}
+        >
           <img
             src="./logo.svg"
             alt="CarChanom Logo"
@@ -75,17 +79,34 @@ const Navbar = () => {
         </div>
 
         {/* Desktop: SearchBar */}
-        <div className="hidden md:flex flex-1 justify-center px-6" ref={desktopSearchRef}>
+        <div
+          className="hidden md:flex flex-1 justify-center px-6"
+          ref={desktopSearchRef}
+        >
           <SearchAll onResults={handleResults} showResultsInline={false} />
         </div>
 
-        {/* Download button */}
-        <button className="hidden md:flex items-center gap-2 px-4 py-2 bg-[#006EFA] rounded-full cursor-pointer" onClick={handleDownload}>
-          <img src="@/../public/download.svg" alt="Download" className="w-5 h-5" />
-          <span className="text-white text-sm md:text-base font-medium font-['IBM Plex Sans Thai']">
-            Download
-          </span>
-        </button>
+        <div className="flex space-x-2">
+          {/* Source Code button */}
+          <a
+            href="https://github.com/n1mb8s/Car-Scraping"
+            className="hidden md:flex items-center gap-2 px-4 py-2"
+          >
+            <span className="text-[#006EFA] text-sm md:text-base font-medium font-['IBM Plex Sans Thai']">
+              SourceCode
+            </span>
+          </a>
+          {/* Download button */}
+          <button
+            className="hidden md:flex items-center gap-2 px-4 py-2 bg-[#006EFA] rounded-full cursor-pointer"
+            onClick={handleDownload}
+          >
+            <img src="/download.svg" alt="Download" className="w-5 h-5" />
+            <span className="text-white text-sm md:text-base font-medium font-['IBM Plex Sans Thai']">
+              Download
+            </span>
+          </button>
+        </div>
 
         {/* Mobile menu button */}
         <button
@@ -93,38 +114,47 @@ const Navbar = () => {
           onClick={() => setIsOpen(!isOpen)}
         >
           {isOpen ? (
-            <img
-              src="@/../public/close.svg"
-              alt="Close menu"
-              className="w-7 h-7 invert"
-            />
+            <img src="/close.svg" alt="Close menu" className="w-7 h-7 invert" />
           ) : (
-            <img
-              src="@/../public/menu.svg"
-              alt="Open menu"
-              className="w-7 h-7 invert"
-            />
+            <img src="/menu.svg" alt="Open menu" className="w-7 h-7 invert" />
           )}
         </button>
       </div>
 
       {/* Mobile dropdown menu */}
       {isOpen && (
-        <div className="md:hidden mt-4 flex flex-col gap-4">
+        <div className="md:hidden mt-4 flex flex-col gap-4 h-32">
           <div ref={mobileSearchRef}>
             <SearchAll onResults={handleResults} showResultsInline={false} />
           </div>
-          <button className="flex items-center gap-2 px-4 py-2 bg-[#006EFA] rounded-full" onClick={handleDownload}>
-            <img src="@/../public/download.svg" alt="Download" className="w-5 h-5" />
-            <span className="text-white text-sm font-medium font-['IBM Plex Sans Thai']">
-              Download
-            </span>
-          </button>
+
+          <div className="flex flex-col w-full items-center">
+            <a
+              href="https://github.com/n1mb8s/Car-Scraping"
+              className="max-w-lg flex items-center gap-2 px-4 py-2 "
+            >
+              <span className="text-[#006EFA] text-sm font-medium font-['IBM Plex Sans Thai']">
+                SourceCode
+              </span>
+            </a>
+            <button
+              className="max-w-lg  flex items-center gap-2 px-4 py-2 bg-[#006EFA] rounded-full"
+              onClick={handleDownload}
+            >
+              <img src="/download.svg" alt="Download" className="w-5 h-5" />
+              <span className="text-white text-sm font-medium font-['IBM Plex Sans Thai']">
+                Download
+              </span>
+            </button>
+          </div>
         </div>
       )}
       {/* Below-nav results panel */}
       {searchResults.length > 0 && (
-        <div className="px-3 py-3 bg-[#0D1017] border-b border-white/10" ref={resultsRef}>
+        <div
+          className="px-3 py-3 bg-[#0D1017] border-b border-white/10"
+          ref={resultsRef}
+        >
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 max-h-96 overflow-y-auto">
             {searchResults.map((item, idx) => (
               <div
@@ -137,19 +167,31 @@ const Navbar = () => {
                     setSearchResults([]);
                     setIsOpen(false);
                   } else if (item?.type === "model") {
-                    const brandSlug = (item.brand_name || "").replace(/\s+/g, "-");
-                    const modelSlug = (item.name || "").replace(`${brandSlug} `, "");
+                    const brandSlug = (item.brand_name || "").replace(
+                      /\s+/g,
+                      "-"
+                    );
+                    const modelSlug = (item.name || "").replace(
+                      `${brandSlug} `,
+                      ""
+                    );
                     navigate(`/brands/${brandSlug}/${modelSlug}`);
                     setSearchResults([]);
                     setIsOpen(false);
                   }
                 }}
               >
-                <img src={item.image_url} alt={item.name} className="w-16 h-16 object-cover rounded" />
+                <img
+                  src={item.image_url}
+                  alt={item.name}
+                  className="w-16 h-16 object-cover rounded"
+                />
                 <div className="flex-1">
                   <div className="text-sm text-gray-500">{item.type}</div>
                   <div className="text-base font-semibold text-gray-900 truncate">
-                    {item.type === "model" && item.brand_name ? `${item.name}` : item.name}
+                    {item.type === "model" && item.brand_name
+                      ? `${item.name}`
+                      : item.name}
                   </div>
                 </div>
               </div>
