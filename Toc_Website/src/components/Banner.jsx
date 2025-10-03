@@ -24,9 +24,9 @@ const Banner = () => {
         </p>
 
         {/* Button */}
-        <button className="px-4 sm:px-6 md:px-6 py-2 sm:py-3 bg-[#006EFA] rounded-full text-white text-sm sm:text-base md:text-lg font-bold font-[IBM Plex Sans Thai] mt-4">
+        <a href="#search" className="px-4 sm:px-6 md:px-6 py-2 sm:py-3 bg-[#006EFA] rounded-full text-white text-sm sm:text-base md:text-lg font-bold font-[IBM Plex Sans Thai] mt-4">
           Explore Now
-        </button>
+        </a>
       </div>
     </section>
   );

@@ -21,14 +21,16 @@ const Home = () => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const response = await fetch(`${import.meta.env.VITE_BASE_URL}/api/brands`);
+        const response = await fetch(
+          `${import.meta.env.VITE_BASE_URL}/api/brands`
+        );
 
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
 
         const data = await response.json();
-        console.log('Brands API response:', data);
+        console.log("Brands API response:", data);
         setCards(data);
       } catch (err) {
         alert(err.message);
@@ -59,7 +61,10 @@ const Home = () => {
 
     if (sfState.type && sfState.type !== "All") {
       const typeVal = card.type ?? card.color ?? card.category;
-      if (typeVal != null && String(typeVal).toLowerCase() !== sfState.type.toLowerCase()) {
+      if (
+        typeVal != null &&
+        String(typeVal).toLowerCase() !== sfState.type.toLowerCase()
+      ) {
         return false;
       }
     }
@@ -102,7 +107,7 @@ const Home = () => {
   return (
     <>
       <Banner />
-      <main className="box-border px-[132px] bg-[#0D1017]">
+      <main id="search" className="box-border px-[132px] bg-[#0D1017]">
         <SearchAndFilter
           filters={filtersConfig}
           query={sfState.query}
