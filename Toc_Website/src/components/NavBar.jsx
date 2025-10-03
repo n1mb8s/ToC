@@ -81,7 +81,7 @@ const Navbar = () => {
 
         {/* Download button */}
         <button className="hidden md:flex items-center gap-2 px-4 py-2 bg-[#006EFA] rounded-full cursor-pointer" onClick={handleDownload}>
-          <img src="@/../public/download.svg" alt="Download" className="w-5 h-5" />
+          <img src="/download.svg" alt="Download" className="w-5 h-5" />
           <span className="text-white text-sm md:text-base font-medium font-['IBM Plex Sans Thai']">
             Download
           </span>
@@ -94,13 +94,13 @@ const Navbar = () => {
         >
           {isOpen ? (
             <img
-              src="@/../public/close.svg"
+              src="/close.svg"
               alt="Close menu"
               className="w-7 h-7 invert"
             />
           ) : (
             <img
-              src="@/../public/menu.svg"
+              src="/menu.svg"
               alt="Open menu"
               className="w-7 h-7 invert"
             />
@@ -115,7 +115,7 @@ const Navbar = () => {
             <SearchAll onResults={handleResults} showResultsInline={false} />
           </div>
           <button className="flex items-center gap-2 px-4 py-2 bg-[#006EFA] rounded-full" onClick={handleDownload}>
-            <img src="@/../public/download.svg" alt="Download" className="w-5 h-5" />
+            <img src="/download.svg" alt="Download" className="w-5 h-5" />
             <span className="text-white text-sm font-medium font-['IBM Plex Sans Thai']">
               Download
             </span>

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import searchIcon from "/search.svg";
 
 const SearchBar = ({ onSearch }) => {
   const [query, setQuery] = useState("");
@@ -27,7 +28,7 @@ const SearchBar = ({ onSearch }) => {
       {/* search icon */}
       <div className="flex items-center gap-2 cursor-pointer" onClick={handleSubmit}>
         <img
-            src="@/../public/search.svg"
+            src={searchIcon}
             className="w-6 h-6"
         />
       </div>

@@ -15,7 +15,7 @@ const Home = () => {
     year: YearMock.initial ?? "All",
   });
   const navigate = useNavigate();
-  const filtersConfig = useMemo(() => [AlphabetMock, TypeMock, YearMock], []);
+  const filtersConfig = useMemo(() => [AlphabetMock], []);
 
   useEffect(() => {
     const fetchData = async () => {
