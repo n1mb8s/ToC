@@ -5,17 +5,57 @@ import SearchAll from "./SearchAll";
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [searchResults, setSearchResults] = useState([]);
+  const [isDownloading, setIsDownloading] = useState(false);
   const resultsRef = useRef(null);
   const desktopSearchRef = useRef(null);
   const mobileSearchRef = useRef(null);
   const navigate = useNavigate();
 
-  const handleDownload = async () => {
+  const handleDownload = async (retryCount = 0) => {
+    if (isDownloading) return;
+
     try {
-      const response = await fetch(
-        `${import.meta.env.VITE_BASE_URL}/api/download/csv/combined`
+      setIsDownloading(true);
+
+      const exportResponse = await fetch(
+        `${import.meta.env.VITE_BASE_URL}/api/export/all`
       );
-      const blob = await response.blob();
+
+      if (!exportResponse.ok) {
+        if (exportResponse.status === 500) {
+          console.warn("Export API returned 500, trying direct download...");
+          await downloadDirectly();
+          return;
+        }
+        throw new Error(`Export API error! status: ${exportResponse.status}`);
+      }
+
+      const exportData = await exportResponse.json();
+      console.log("Export API response:", exportData);
+
+      if (exportData.status !== "success") {
+        throw new Error(exportData.message || "Export failed");
+      }
+
+      const downloadEndpoint = exportData.download_endpoints?.combined;
+      if (!downloadEndpoint) {
+        throw new Error("Download endpoint not found in response");
+      }
+
+      const downloadResponse = await fetch(
+        `${import.meta.env.VITE_BASE_URL}${downloadEndpoint}`
+      );
+
+      if (!downloadResponse.ok) {
+        if (downloadResponse.status === 500 && retryCount === 0) {
+          console.warn("Download endpoint returned 500, trying direct download...");
+          await downloadDirectly();
+          return;
+        }
+        throw new Error(`Download error! status: ${downloadResponse.status}`);
+      }
+
+      const blob = await downloadResponse.blob();
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
@@ -24,9 +64,47 @@ const Navbar = () => {
       a.click();
       a.remove();
       window.URL.revokeObjectURL(url);
+
+      console.log("File downloaded successfully");
     } catch (err) {
-      alert(err.message);
+      console.error("Download error:", err);
+
+      if (retryCount === 0) {
+        console.log("Retrying with direct download...");
+        try {
+          await downloadDirectly();
+          return;
+        } catch (directErr) {
+          console.error("Direct download also failed:", directErr);
+        }
+      }
+
+      alert(`Download failed: ${err.message}. Please try again later.`);
+    } finally {
+      setIsDownloading(false);
     }
+  };
+
+  const downloadDirectly = async () => {
+    const downloadResponse = await fetch(
+      `${import.meta.env.VITE_BASE_URL}/api/download/csv/combined`
+    );
+
+    if (!downloadResponse.ok) {
+      throw new Error(`Direct download error! status: ${downloadResponse.status}`);
+    }
+
+    const blob = await downloadResponse.blob();
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "car_data_combined.csv";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    window.URL.revokeObjectURL(url);
+
+    console.log("File downloaded successfully via direct download");
   };
 
   const handleResults = (items) => setSearchResults(items || []);
@@ -98,12 +176,20 @@ const Navbar = () => {
           </a>
           {/* Download button */}
           <button
-            className="hidden md:flex items-center gap-2 px-4 py-2 bg-[#006EFA] rounded-full cursor-pointer"
+            className={`hidden md:flex items-center gap-2 px-4 py-2 rounded-full ${isDownloading
+              ? 'bg-gray-500 cursor-not-allowed'
+              : 'bg-[#006EFA] cursor-pointer hover:bg-[#0056CC]'
+              } transition-colors`}
             onClick={handleDownload}
+            disabled={isDownloading}
           >
-            <img src="/download.svg" alt="Download" className="w-5 h-5" />
+            {isDownloading ? (
+              <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+            ) : (
+              <img src="/download.svg" alt="Download" className="w-5 h-5" />
+            )}
             <span className="text-white text-sm md:text-base font-medium font-['IBM Plex Sans Thai']">
-              Download
+              {isDownloading ? 'Downloading...' : 'Download'}
             </span>
           </button>
         </div>
@@ -138,12 +224,20 @@ const Navbar = () => {
               </span>
             </a>
             <button
-              className="max-w-lg  flex items-center gap-2 px-4 py-2 bg-[#006EFA] rounded-full"
+              className={`max-w-lg flex items-center gap-2 px-4 py-2 rounded-full ${isDownloading
+                ? 'bg-gray-500 cursor-not-allowed'
+                : 'bg-[#006EFA] cursor-pointer hover:bg-[#0056CC]'
+                } transition-colors`}
               onClick={handleDownload}
+              disabled={isDownloading}
             >
-              <img src="/download.svg" alt="Download" className="w-5 h-5" />
+              {isDownloading ? (
+                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+              ) : (
+                <img src="/download.svg" alt="Download" className="w-5 h-5" />
+              )}
               <span className="text-white text-sm font-medium font-['IBM Plex Sans Thai']">
-                Download
+                {isDownloading ? 'Downloading...' : 'Download'}
               </span>
             </button>
           </div>
