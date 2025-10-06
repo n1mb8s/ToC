@@ -79,6 +79,7 @@ class CSVExporter:
         """
         Scrape all brands and their models in one operation
         Returns a dictionary with brands and all their models
+        Limits to 500 total models for performance
         """
         print("Scraping all brands...")
         brands = self.scrape_all_brands()
@@ -90,8 +91,15 @@ class CSVExporter:
             'all_models': []
         }
         
+        total_models_scraped = 0
+        max_models = 500
+        
         for brand in brands:
-            print(f"Scraping models for {brand.name}")
+            if total_models_scraped >= max_models:
+                print(f"Reached limit of {max_models} models. Stopping scraping.")
+                break
+                
+            print(f"Scraping models for {brand.name} (Total so far: {total_models_scraped}/{max_models})")
             models = []
             success = False
 
@@ -128,6 +136,11 @@ class CSVExporter:
                     except Exception as e:
                         print(f"  URL {url} failed: {e}")
             
+            remaining_slots = max_models - total_models_scraped
+            if len(models) > remaining_slots:
+                models = models[:remaining_slots]
+                print(f"Limited to {remaining_slots} models to stay within {max_models} total limit")
+            
             all_data['models_by_brand'][brand.name] = models
             
             for model in models:
@@ -135,9 +148,16 @@ class CSVExporter:
                 model_dict['brand_name'] = brand.name
                 all_data['all_models'].append(model_dict)
             
+            total_models_scraped += len(models)
+            
             if not success:
                 print(f"  No models found for {brand.name} after trying all URL formats")
+            
+            if total_models_scraped >= max_models:
+                print(f"Reached limit of {max_models} models. Exiting scraping process.")
+                break
                 
+        print(f"Scraping completed! Total models: {total_models_scraped}, Brands processed: {len(all_data['models_by_brand'])}")
         return all_data
     
     # def export_brands_to_csv(self, brands: List[CarBrand], filename: str = "car_brands.csv") -> str:
